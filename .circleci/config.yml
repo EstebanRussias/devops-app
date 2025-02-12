@@ -25,6 +25,12 @@ jobs:
       - checkout
       - run: echo "Les fichiers ont été nettoyés et emballés ..."
 
+  build_check:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Tout est prêt pour le build on peut passer au test..."
+
   #--------------------------- Tests ------------------------------------------------------------------
   unit_tests:
     executor: node/default
@@ -126,25 +132,27 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
+    # Build
       - install_dependencies
       - analyze_code
       - cleaning_packaging
-
+      
+      - build_check:
+          requires:
+            - install_dependencies
+            - analyze_code
+            - cleaning_packaging
+    # Tests
       - unit_tests:
           requires:
-            - install_dependencies
-            - analyze_code
-            - cleaning_packaging
+            - build_check
+
       - integration_tests:
           requires:
-            - install_dependencies
-            - analyze_code
-            - cleaning_packaging
+            - build_check
       - regression_tests:
           requires:
-            - install_dependencies
-            - analyze_code
-            - cleaning_packaging
+            - build_check
 
       - performance_tests:
           requires:
