@@ -1,7 +1,7 @@
 ---
 version: 2.1
-orbs: null
-node: circleci/node@5
+orbs:
+  node: circleci/node@5
 jobs:
   build:
     executor: node/default
