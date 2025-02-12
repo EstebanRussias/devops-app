@@ -2,18 +2,34 @@
 version: 2.1
 orbs:
   node: circleci/node@5
+
 jobs:
-  build:
+  #--------------------------- Build ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  install_dependencies:
     executor: node/default
     steps:
       - checkout
-      - run: echo "Building things..."
+      - node/install-packages:
+          pkg-manager: npm
+      - run: echo "Les dépendences ont été téléchargées..."
+
+  analyze_code:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Analyse du code ..."
+
+  cleaning_packaging:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Les fichiers ont été nettoyés et emballés ..."
+
+  #--------------------------- Tests ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   unit_tests:
     executor: node/default
-    environment:
-      JEST_JUNIT_OUTPUT_DIR: ./test-results/
     steps:
-      - checkout
+      -checkout
       - node/install-packages:
           pkg-manager: npm
       - run:
@@ -23,36 +39,157 @@ jobs:
           command: npm run test:ci
       - store_test_results:
           path: ./test-results/
-  deploy_dev:
+
+  integration_tests:
     executor: node/default
     steps:
       - checkout
-      - run: echo "Deploying to development environment..."
-  deploy_prod:
+      - run: echo "Exécution des tests d'intégration..."
+
+  regression_tests:
     executor: node/default
     steps:
       - checkout
-      - run: echo "Deploying to production environment..."
+      - run: echo "Exécution des tests de régression..."
+
+  performance_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests de performance..."
+
+  security_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests de sécurité..."
+
+  compatibility_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests de compatibilité..."
+
+  accessibility_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests d'accessibilité..."
+
+  #--------------------------- Deploy ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  prepare_deployment:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Préparation de l'environnement de déploiement..."
+
+  deploy_application:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Déploiement de l'application..."
+
+  verification_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests de vérification..."
+
+  functional_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests de validation fonctionnelle..."
+
+  load_tests:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Exécution des tests de charge..."
+
+  finalize_deployment:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Finalisation du déploiement..."
+
+  monitoring:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Surveillance et suivi de l'application..."
+
+#--------------------------- Workflow ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 workflows:
   version: 2
-  build-test-deploy:
+  build_and_deploy:
     jobs:
-      - build
-      - unit_tests:
-          requires:
-            - build
-      - deploy_dev:
-          requires:
-            - unit_tests
-          filters:
-            branches:
-              only:
-                - develop
-      - deploy_prod:
-          requires:
-            - unit_tests
-          filters:
-            branches:
-              only:
-                - main
+      - install_dependencies
+      - analyze_code
+      - cleaning_packaging
 
+      - unit_tests
+      - integration_tests
+      - regression_tests
+
+      - performance_tests:
+          filters:
+            branches:
+              only: develop  # Tests de performance exécutés uniquement sur main
+
+      - security_tests:
+          filters:
+            branches:
+              only: develop  # Tests de sécurité exécutés uniquement sur main
+
+      - compatibility_tests
+
+      - accessibility_tests:
+          filters:
+            branches:
+              only:
+                - develop  
+
+      - prepare_deployment:
+          filters:
+            branches:
+              ignore:
+                - /^feature\/.*/  
+                - /^hotfix\/.*/   
+
+      - deploy_application:
+          requires:
+            - prepare_deployment
+          filters:
+            branches:
+              ignore:
+                - /^feature\/.*/  
+                - /^hotfix\/.*/   
+
+      - verification_tests:
+          requires:
+            - deploy_application
+
+      - functional_tests:
+          requires:
+            - deploy_application
+
+      - load_tests:
+          requires:
+            - deploy_application
+          filters:
+            branches:
+              only: main  
+
+      - finalize_deployment:
+          requires:
+            - verification_tests
+            - functional_tests
+            - load_tests
+
+      - monitoring:
+          requires:
+            - finalize_deployment
+          filters:
+            branches:
+              only: main  
