@@ -83,6 +83,11 @@ jobs:
     steps:
       - checkout
       - run: echo "Exécution des tests d'accessibilité..."
+  test_check:
+    executor: node/default
+    steps:
+      - checkout
+      - run: echo "Tout est prêt pour les tests on peut passer au deploy..."
 
   #--------------------------- Deploy ------------------------------------------------------------------
   prepare_deployment:
@@ -153,36 +158,33 @@ workflows:
       - regression_tests:
           requires:
             - build_check
-
-      - performance_tests:
+      - test_check:
           requires:
             - unit_tests
             - integration_tests
             - regression_tests
+  # Deploy
+      - performance_tests:
+          requires:
+            - test_check
           filters:
             branches:
               only: develop  
 
       - security_tests:
           requires:
-            - unit_tests
-            - integration_tests
-            - regression_tests
+            - test_check
           filters:
             branches:
               only: develop  
 
       - compatibility_tests:
           requires:
-            - unit_tests
-            - integration_tests
-            - regression_tests
+            - test_check
 
       - accessibility_tests:
           requires:
-            - unit_tests
-            - integration_tests
-            - regression_tests
+            - test_check
           filters:
             branches:
               only:
@@ -190,9 +192,7 @@ workflows:
 
       - prepare_deployment:
           requires:
-            - unit_tests
-            - integration_tests
-            - regression_tests
+            - test_check
             - performance_tests
             - security_tests
             - compatibility_tests
