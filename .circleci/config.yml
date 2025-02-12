@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@5
 
 jobs:
-  #--------------------------- Build ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  #--------------------------- Build ------------------------------------------------------------------
   install_dependencies:
     executor: node/default
     steps:
@@ -25,7 +25,7 @@ jobs:
       - checkout
       - run: echo "Les fichiers ont été nettoyés et emballés ..."
 
-  #--------------------------- Tests ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  #--------------------------- Tests ------------------------------------------------------------------
   unit_tests:
     executor: node/default
     environment:
@@ -78,7 +78,7 @@ jobs:
       - checkout
       - run: echo "Exécution des tests d'accessibilité..."
 
-  #--------------------------- Deploy ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  #--------------------------- Deploy ------------------------------------------------------------------
   prepare_deployment:
     executor: node/default
     steps:
@@ -121,7 +121,7 @@ jobs:
       - checkout
       - run: echo "Surveillance et suivi de l'application..."
 
-#--------------------------- Workflow ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------- Workflow ------------------------------------------------------------------
 workflows:
   version: 2
   build_and_deploy:
@@ -130,29 +130,65 @@ workflows:
       - analyze_code
       - cleaning_packaging
 
-      - unit_tests
-      - integration_tests
-      - regression_tests
+      - unit_tests:
+          requires:
+            - install_dependencies
+            - analyze_code
+            - cleaning_packaging
+      - integration_tests:
+          requires:
+            - install_dependencies
+            - analyze_code
+            - cleaning_packaging
+      - regression_tests:
+          requires:
+            - install_dependencies
+            - analyze_code
+            - cleaning_packaging
 
       - performance_tests:
+          requires:
+            - unit_tests
+            - integration_tests
+            - regression_tests
           filters:
             branches:
-              only: develop  # Tests de performance exécutés uniquement sur main
+              only: develop  
 
       - security_tests:
+          requires:
+            - unit_tests
+            - integration_tests
+            - regression_tests
           filters:
             branches:
-              only: develop  # Tests de sécurité exécutés uniquement sur main
+              only: develop  
 
-      - compatibility_tests
+      - compatibility_tests:
+          requires:
+            - unit_tests
+            - integration_tests
+            - regression_tests
 
       - accessibility_tests:
+          requires:
+            - unit_tests
+            - integration_tests
+            - regression_tests
           filters:
             branches:
               only:
                 - develop  
 
       - prepare_deployment:
+          requires:
+            - unit_tests
+            - integration_tests
+            - regression_tests
+            - performance_tests
+            - security_tests
+            - compatibility_tests
+            - accessibility_tests
           filters:
             branches:
               ignore:
@@ -194,4 +230,4 @@ workflows:
             - finalize_deployment
           filters:
             branches:
-              only: main  
+              only: main
