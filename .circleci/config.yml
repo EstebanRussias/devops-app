@@ -158,45 +158,46 @@ workflows:
       - regression_tests:
           requires:
             - build_check
-      - test_check:
-          requires:
-            - unit_tests
-            - integration_tests
-            - regression_tests
-  # Deploy
+      
       - performance_tests:
           requires:
-            - test_check
+            - build_check
           filters:
             branches:
               only: develop  
 
       - security_tests:
           requires:
-            - test_check
+            - build_check
           filters:
             branches:
               only: develop  
 
       - compatibility_tests:
           requires:
-            - test_check
+            - build_check
 
       - accessibility_tests:
           requires:
-            - test_check
+            - build_check
           filters:
             branches:
               only:
                 - develop  
-
-      - prepare_deployment:
+      - test_check:
           requires:
-            - test_check
+            - unit_tests
+            - integration_tests
+            - regression_tests
             - performance_tests
             - security_tests
             - compatibility_tests
             - accessibility_tests
+
+  # Deploy
+      - prepare_deployment:
+          requires:
+            - test_check
           filters:
             branches:
               ignore:
@@ -225,7 +226,7 @@ workflows:
             - deploy_application
           filters:
             branches:
-              only: main  
+              only: develop  
 
       - finalize_deployment:
           requires:
