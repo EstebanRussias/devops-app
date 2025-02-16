@@ -1,43 +1,30 @@
-# Next.js + Jest
+# README - Projet
 
-This example shows how to configure Jest to work with Next.js.
+## Participants
+- Esteban Russias
 
-This includes Next.js' built-in support for Global CSS, CSS Modules and TypeScript. This example also shows how to use Jest with the App Router and React Server Components.
+## Stack Technique
+Le projet utilise la stack technique suivante :
+- **Langages** : JavaScript, Node.js
+- **Gestion des dépendances** : npm
+- **CI/CD** : CircleCI
+- **Frameworks et outils** : Jest (pour les tests unitaires), Git (gestion de version), GitFlow (workflow de branche)
 
-> **Note:** Since tests can be co-located alongside other files inside the App Router, we have placed those tests in `app/` to demonstrate this behavior (which is different than `pages/`). You can still place all tests in `__tests__` if you prefer.
+## Répertoire GitHub
+Le projet est disponible sur GitHub : [Lien vers le dépôt GitHub](https://github.com/EstebanRussias/devops-app)
 
-## Deploy your own
+## Installation et démarrage du projet
+### Prérequis
+Avant de commencer, assurez-vous d'avoir installé :
+- Node.js (dernière version stable)
+- npm (inclus avec Node.js)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-jest&project-name=with-jest&repository-name=with-jest)
+## Explication du fichier de configuration (CircleCI)
+Le projet utilise CircleCI pour l'intégration et le déploiement continu. Voici un résumé des principaux jobs et workflows définis dans le fichier `config.yml` :
 
-## How to Use
+## Captures d’écran des workflows
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
 
-```bash
-npx create-next-app --example with-jest with-jest-app
-```
+---
 
-```bash
-yarn create next-app --example with-jest with-jest-app
-```
 
-```bash
-pnpm create next-app --example with-jest with-jest-app
-```
-
-## Running Tests
-
-```bash
-npm test
-```
-
-```bash
-yarn test
-```
-
-```bash
-pnpm test
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
