@@ -133,167 +133,111 @@ jobs:
       - run: echo "Surveillance et suivi de l'application..."
 
 #--------------------------- Workflow ------------------------------------------------------------------
-  workflows:
-    version: 2
-    build_and_deploy:
-      jobs:
-      # Build
-        - install_dependencies:
-            filters:
-              branches:
-                only:
-                  - develop  
-        - analyze_code:
-            filters:
-              branches:
-                only:
-                  - develop  
-        - cleaning_packaging:
-            filters:
-              branches:
-                only:
-                  - develop  
-        
-        - build_check:
-            requires:
-              - install_dependencies
-              - analyze_code
-              - cleaning_packaging
-            filters:
-              branches:
-                only:
-                  - develop  
-  
-      # Tests
-        - unit_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - develop  
-  
-        - integration_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - integration
-                  - develop   
-            
-        - regression_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - integration 
-                  - develop  
-            
-        - performance_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - develop  
-  
-        - security_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - develop  
-  
-        - compatibility_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - develop  
-  
-        - accessibility_tests:
-            requires:
-              - build_check
-            filters:
-              branches:
-                only:
-                  - develop  
-  
-        - test_check:
-            requires:
-              - unit_tests
-              - integration_tests
-              - regression_tests
-              - performance_tests
-              - security_tests
-              - compatibility_tests
-              - accessibility_tests
-            filters:
-              branches:
-                only:
-                  - develop
-                  - integration  
-    # Deploy
-        - prepare_deployment:
-            requires:
-              - test_check
-            filters:
-              branches:
-                only:
-                  - develop
-                  - integration  
-  
-        - deploy_application:
-            requires:
-              - prepare_deployment
-            filters:
-              branches:
-                only:
-                  - main 
-  
-        - verification_tests:
-            requires:
-              - deploy_application
-            filters:
-              branches:
-                only:
-                  - main  
-  
-        - functional_tests:
-            requires:
-              - deploy_application
-            filters:
-              branches:
-                only:
-                  - main  
-  
-        - load_tests:
-            requires:
-              - deploy_application
-            filters:
-              branches:
-                only:
-                  - main 
-  
-        - finalize_deployment:
-            requires:
-              - verification_tests
-              - functional_tests
-              - load_tests
-            filters:
-              branches:
-                only:
-                  - main  
-  
-        - monitoring:
-            requires:
-              - finalize_deployment
-            filters:
-              branches:
-                only:
-                  - main  
-  
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+    # Build
+      - install_dependencies
+      - analyze_code
+      - cleaning_packaging
+      
+      - build_check:
+          requires:
+            - install_dependencies
+            - analyze_code
+            - cleaning_packaging
+    # Tests
+      - unit_tests:
+          requires:
+            - build_check
+
+      - integration_tests:
+          requires:
+            - build_check
+      - regression_tests:
+          requires:
+            - build_check
+      
+      - performance_tests:
+          requires:
+            - build_check
+          filters:
+            branches:
+              only: develop  
+
+      - security_tests:
+          requires:
+            - build_check
+          filters:
+            branches:
+              only: develop  
+
+      - compatibility_tests:
+          requires:
+            - build_check
+
+      - accessibility_tests:
+          requires:
+            - build_check
+          filters:
+            branches:
+              only:
+                - develop  
+      - test_check:
+          requires:
+            - unit_tests
+            - integration_tests
+            - regression_tests
+            - performance_tests
+            - security_tests
+            - compatibility_tests
+            - accessibility_tests
+
+  # Deploy
+      - prepare_deployment:
+          requires:
+            - test_check
+          filters:
+            branches:
+              ignore:
+                - /^feature\/.*/  
+                - /^hotfix\/.*/   
+
+      - deploy_application:
+          requires:
+            - prepare_deployment
+          filters:
+            branches:
+              ignore:
+                - /^feature\/.*/  
+                - /^hotfix\/.*/   
+
+      - verification_tests:
+          requires:
+            - deploy_application
+
+      - functional_tests:
+          requires:
+            - deploy_application
+
+      - load_tests:
+          requires:
+            - deploy_application
+          filters:
+            branches:
+              only: develop  
+
+      - finalize_deployment:
+          requires:
+            - verification_tests
+            - functional_tests
+            - load_tests
+
+      - monitoring:
+          requires:
+            - finalize_deployment
+          filters:
+            branches:
+              only: main
+git 
