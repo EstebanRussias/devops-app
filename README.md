@@ -24,6 +24,8 @@ Le projet utilise CircleCI pour l'intégration et le déploiement continu. Voici
 
 ## Captures d’écran des workflows
 
+![image](https://github.com/user-attachments/assets/ca4408f7-b08a-4530-81bc-401452e30c06)
+
 
 ---
 
