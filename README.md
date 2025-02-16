@@ -22,9 +22,15 @@ Avant de commencer, assurez-vous d'avoir installé :
 ## Explication du fichier de configuration (CircleCI)
 Le projet utilise CircleCI pour l'intégration et le déploiement continu. Voici un résumé des principaux jobs et workflows définis dans le fichier `config.yml` :
 
+Petites informations complémentaires 
+- Sur la branche develop j'ai décidé de faire les tests de build et les tests unitaires
+- Sur la branche main j'ai décidé de faire tous les tests car il me semblait plus logique pour le déploiement ensuite
+- Sur la branche intégration il y a uniquement les tests d'intégration
+
 ## Captures d’écran des workflows
 
-![image](https://github.com/user-attachments/assets/ca4408f7-b08a-4530-81bc-401452e30c06)
+
+[5f58d936-18da-4c9a-a96e-b2fdcc354095.pdf](https://github.com/user-attachments/files/18815763/5f58d936-18da-4c9a-a96e-b2fdcc354095.pdf)
 
 
 ---
